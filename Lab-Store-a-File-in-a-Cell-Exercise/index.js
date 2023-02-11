@@ -61,12 +61,12 @@ async function main()
 	transaction = transaction.update("inputs", (i)=>i.concat(inputCells));
 
 	// Get the capacity sums of the inputs and outputs.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const outputCapacity2 = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	const output2 = {cell_output: {capacity: outputCapacity2, lock: addressToScript(ADDRESS), type: null}, data: "0x"};
+	const output2 = {cellOutput: {capacity: outputCapacity2, lock: addressToScript(ADDRESS), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output2));	
 
 	// Add in the witness placeholders.

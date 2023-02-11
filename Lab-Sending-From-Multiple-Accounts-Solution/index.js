@@ -57,7 +57,7 @@ async function main()
 
 	// Create a cell using the default lock script.
 	const outputCapacity1 = intToHex(amountToTransfer);
-	const output1 = {cell_output: {capacity: outputCapacity1, lock: addressToScript(DANIEL_ADDRESS), type: null}, data: "0x"};
+	const output1 = {cellOutput: {capacity: outputCapacity1, lock: addressToScript(DANIEL_ADDRESS), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 
 	// Add in the witness placeholders.

@@ -54,15 +54,15 @@ async function initializeLab(NODE_URL, indexer)
 	transaction = transaction.update("inputs", (i)=>i.concat(recycleCells));
 
 	// Determine the capacity from recycled Cells.
-	const recycleCapacity = recycleCells.reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const recycleCapacity = recycleCells.reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create cells for the funding address.
 	const outputCapacity1 = intToHex(ckbytesToShannons(1000n));
-	const output1 = {cell_output: {capacity: outputCapacity1, lock: addressToScript(ADDRESS_2), type: null}, data: "0x"};
+	const output1 = {cellOutput: {capacity: outputCapacity1, lock: addressToScript(ADDRESS_2), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 
 	// Get the sum of the outputs.
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Add input capacity cells to the transaction.
 	if(outputCapacity - recycleCapacity + ckbytesToShannons(61n) > 0) // Only add if there isn't enough recycled capacity.
@@ -73,11 +73,11 @@ async function initializeLab(NODE_URL, indexer)
 	}
 
 	// Determine the capacity of all input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const changeCapacity = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	let change = {cell_output: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
+	let change = {cellOutput: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(change));
 
 	// Add in the witness placeholders.
@@ -129,7 +129,7 @@ async function initializeLumosSkeleton(indexer)
 	let skeleton = TransactionSkeleton();
 
 	// Add the cell dep for the lock script.
-	skeleton = skeleton.update("cellDeps", (cellDeps)=>cellDeps.push(locateCellDep({code_hash: DEFAULT_LOCK_HASH, hash_type: "type"})));
+	skeleton = skeleton.update("cellDeps", (cellDeps)=>cellDeps.push(locateCellDep({codeHash: DEFAULT_LOCK_HASH, hashType: "type"})));
 
 	return skeleton;
 }
@@ -144,20 +144,20 @@ async function validateLab(skeleton)
 	if(tx.outputs.length != 2)
 		throw new Error("This lab requires two output cells.");
 
-	if(hexToInt(tx.outputs[0].cell_output.capacity) != ckbytesToShannons(74n))
+	if(hexToInt(tx.outputs[0].cellOutput.capacity) != ckbytesToShannons(74n))
 		throw new Error("This lab requires output 0 to have a capacity of 74 CKBytes.")
 
 	if(tx.outputs[0].data !== "0x48656c6c6f204e6572766f7321")
 		throw new Error("Output 0 must have data matching the content of HelloNervos.txt.");
 
-	if(hexToInt(tx.outputs[1].cell_output.capacity) != ckbytesToShannons(926n) - 100_000n)
+	if(hexToInt(tx.outputs[1].cellOutput.capacity) != ckbytesToShannons(926n) - 100_000n)
 		throw new Error("This lab requires output 1 to have a capacity of 92,599,900,000 Shannons.")
 
 	if(tx.outputs[1].data !== "0x")
 		throw new Error("Output 0 must have no data.");
 
-	const inputCapacity = skeleton.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = skeleton.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = skeleton.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = skeleton.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 	const TX_FEE = inputCapacity - outputCapacity;
 
 	if(outputCapacity > inputCapacity)

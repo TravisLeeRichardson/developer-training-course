@@ -14,7 +14,7 @@ const PRIVATE_KEY = "0xd00c06bfd800d27397002dca6fb0993d5ba6399b4238b2f29ee9deb97
 const ADDRESS = "ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqwgx292hnvmn68xf779vmzrshpmm6epn4c0cgwga";
 const PREVIOUS_OUTPUT =
 {
-	tx_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+	txHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
 	index: "0x0"
 };
 const TX_FEE = 10_000n;
@@ -42,12 +42,12 @@ async function main()
 
 	// Create a cell with 1,000 CKBytes.
 	const outputCapacity1 = intToHex(ckbytesToShannons(1_000n));
-	const output1 = {cell_output: {capacity: outputCapacity1, lock: addressToScript(ADDRESS), type: null}, data: "0x"};
+	const output1 = {cellOutput: {capacity: outputCapacity1, lock: addressToScript(ADDRESS), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 
 	// Create a change Cell for the remaining CKBytes.
-	const outputCapacity2 = intToHex(hexToInt(input.cell_output.capacity) - hexToInt(output1.cell_output.capacity) - TX_FEE);
-	const output2 = {cell_output: {capacity: outputCapacity2, lock: addressToScript(ADDRESS), type: null}, data: "0x"};
+	const outputCapacity2 = intToHex(hexToInt(input.cellOutput.capacity) - hexToInt(output1.cellOutput.capacity) - TX_FEE);
+	const output2 = {cellOutput: {capacity: outputCapacity2, lock: addressToScript(ADDRESS), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output2));
 
 	// Add in the witness placeholders.

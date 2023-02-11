@@ -26,8 +26,8 @@ console.log(`Lock Arg:\t${lockArg} (20 bytes)`);
 // Here we construct a lock script using the default lock and the lock arg for our genesis account. 
 const lockScript =
 {
-	code_hash: "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8", // This is the default lock script address for the local development blockchain.
-	hash_type: "type", // The default lock script always uses a value of "type".
+	codeHash: "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8", // This is the default lock script address for the local development blockchain.
+	hashType: "type", // The default lock script always uses a value of "type".
 	args: lockArg
 };
 const lines = JSON.stringify(lockScript, null, 2).split("\n");

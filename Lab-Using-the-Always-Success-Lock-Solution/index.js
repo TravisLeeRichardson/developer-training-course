@@ -36,7 +36,7 @@ async function deployCode(indexer)
 	// Create a cell with data from the specified file.
 	const {hexString: hexString1, dataSize: dataSize1} = await readFileToHexString(DATA_FILE_1);
 	const outputCapacity1 = ckbytesToShannons(61n) + ckbytesToShannons(dataSize1);
-	const output1 = {cell_output: {capacity: intToHex(outputCapacity1), lock: addressToScript(ADDRESS_1), type: null}, data: hexString1};
+	const output1 = {cellOutput: {capacity: intToHex(outputCapacity1), lock: addressToScript(ADDRESS_1), type: null}, data: hexString1};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 
 	// Add input capacity cells.
@@ -44,12 +44,12 @@ async function deployCode(indexer)
 	transaction = transaction.update("inputs", (i)=>i.concat(collectedCells.inputCells));
 
 	// Determine the capacity of all input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const changeCapacity = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	let change = {cell_output: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
+	let change = {cellOutput: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(change));
 
 	// Add in the witness placeholders.
@@ -75,7 +75,7 @@ async function deployCode(indexer)
 	// Return the out point for the always success binary so it can be used in the next transaction.
 	const outPoint =
 	{
-		tx_hash: txid,
+		txHash: txid,
 		index: "0x0"
 	};
 
@@ -94,11 +94,11 @@ async function createCells(indexer)
 	const outputCapacity1 = ckbytesToShannons(41n);
 	const lockScript1 =
 	{
-		code_hash: DATA_FILE_HASH_1,
-		hash_type: "data",
+		codeHash: DATA_FILE_HASH_1,
+		hashType: "data",
 		args: "0x"
 	};
-	const output1 = {cell_output: {capacity: intToHex(outputCapacity1), lock: lockScript1, type: null}, data: "0x"};
+	const output1 = {cellOutput: {capacity: intToHex(outputCapacity1), lock: lockScript1, type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
@@ -109,12 +109,12 @@ async function createCells(indexer)
 	transaction = transaction.update("inputs", (i)=>i.concat(collectedCells.inputCells));
 
 	// Determine the capacity of all input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const changeCapacity = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	let change = {cell_output: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
+	let change = {cellOutput: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(change));
 
 	// Add in the witness placeholders.
@@ -140,9 +140,9 @@ async function createCells(indexer)
 	// Return the out points for the cells locked with the always success lock so it can be used in the next transaction.
 	const outPoints =
 	[
-		{tx_hash: txid, index: "0x0"},
-		{tx_hash: txid, index: "0x1"},
-		{tx_hash: txid, index: "0x2"}
+		{txHash: txid, index: "0x0"},
+		{txHash: txid, index: "0x1"},
+		{txHash: txid, index: "0x2"}
 	];
 
 	return outPoints;
@@ -155,7 +155,7 @@ async function consumeCells(indexer, alwaysSuccessCodeOutPoint, alwaysSuccessCel
 
 	// Add the cell dep for the lock script.
 	transaction = addDefaultCellDeps(transaction);
-	const cellDep = {dep_type: "code", out_point: alwaysSuccessCodeOutPoint};
+	const cellDep = {depType: "code", outPoint: alwaysSuccessCodeOutPoint};
 	transaction = transaction.update("cellDeps", (cellDeps)=>cellDeps.push(cellDep));
 
 	// Add the always success cells to the transaction.
@@ -166,12 +166,12 @@ async function consumeCells(indexer, alwaysSuccessCodeOutPoint, alwaysSuccessCel
 	}
 
 	// Determine the capacity of all input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const changeCapacity = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	let change = {cell_output: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
+	let change = {cellOutput: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(change));
 
 	// Add in the witness placeholders.

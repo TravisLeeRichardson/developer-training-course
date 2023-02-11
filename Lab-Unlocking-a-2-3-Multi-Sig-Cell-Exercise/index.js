@@ -70,8 +70,8 @@ async function createMultiSigCell(indexer)
 	console.log("\n");
 
 	const outPoints = [
-		{tx_hash: txid, index: "0x0"},
-		{tx_hash: txid, index: "0x1"}
+		{txHash: txid, index: "0x0"},
+		{txHash: txid, index: "0x1"}
 	];
 
 	return outPoints;

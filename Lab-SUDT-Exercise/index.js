@@ -39,7 +39,7 @@ async function deployCode(indexer)
 	// Create a cell with data from the specified file.
 	const {hexString: hexString1, dataSize: dataSize1} = await readFileToHexString(DATA_FILE_1);
 	const outputCapacity1 = ckbytesToShannons(61n) + ckbytesToShannons(dataSize1);
-	const output1 = {cell_output: {capacity: intToHex(outputCapacity1), lock: addressToScript(ALICE_ADDRESS), type: null}, data: hexString1};
+	const output1 = {cellOutput: {capacity: intToHex(outputCapacity1), lock: addressToScript(ALICE_ADDRESS), type: null}, data: hexString1};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 
 	// Add input capacity cells.
@@ -47,12 +47,12 @@ async function deployCode(indexer)
 	transaction = transaction.update("inputs", (i)=>i.concat(collectedCells.inputCells));
 
 	// Determine the capacity of all input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const changeCapacity = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	let change = {cell_output: {capacity: changeCapacity, lock: addressToScript(ALICE_ADDRESS), type: null}, data: "0x"};
+	let change = {cellOutput: {capacity: changeCapacity, lock: addressToScript(ALICE_ADDRESS), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(change));
 
 	// Add in the witness placeholders.
@@ -78,7 +78,7 @@ async function deployCode(indexer)
 	// Return the out point for the binary so it can be used in the next transaction.
 	const outPoint =
 	{
-		tx_hash: txid,
+		txHash: txid,
 		index: "0x0"
 	};
 
@@ -92,20 +92,20 @@ async function createCells(indexer, scriptCodeOutPoint)
 
 	// Add the cell deps.
 	transaction = addDefaultCellDeps(transaction);
-	const cellDep = {dep_type: "code", out_point: scriptCodeOutPoint};
+	const cellDep = {depType: "code", outPoint: scriptCodeOutPoint};
 	transaction = transaction.update("cellDeps", (cellDeps)=>cellDeps.push(cellDep));
 
 	// Create a token cells.
 	???
 	
 	// Determine the capacity from all output Cells.
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 	
 	// Add input capacity cells.
 	???
 
 	// Determine the capacity of all input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	???
@@ -138,7 +138,7 @@ async function transferCells(indexer, scriptCodeOutPoint)
 
 	// Add the cell deps.
 	transaction = addDefaultCellDeps(transaction);
-	const cellDep = {dep_type: "code", out_point: scriptCodeOutPoint};
+	const cellDep = {depType: "code", outPoint: scriptCodeOutPoint};
 	transaction = transaction.update("cellDeps", (cellDeps)=>cellDeps.push(cellDep));
 
 	// Add Alice's token cells to the transaction.
@@ -155,13 +155,13 @@ async function transferCells(indexer, scriptCodeOutPoint)
 	???
 
 	// Determine the capacity for the output cells.
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Add input capacity cells.
 	???
 
 	// Determine the capacity from input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	???
@@ -194,15 +194,15 @@ async function consumeCells(indexer, scriptCodeOutPoint)
 
 	// Add the cell deps.
 	transaction = addDefaultCellDeps(transaction);
-	const cellDep = {dep_type: "code", out_point: scriptCodeOutPoint};
+	const cellDep = {depType: "code", outPoint: scriptCodeOutPoint};
 	transaction = transaction.update("cellDeps", (cellDeps)=>cellDeps.push(cellDep));
 
 	// Add Alice's token cells to the transaction.
 	???
 
 	// Determine the capacity of the input and output cells.
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	???

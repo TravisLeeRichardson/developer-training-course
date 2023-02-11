@@ -53,12 +53,12 @@ async function main()
 		throw new Error("Unable to locate a live cell with the expected data.");
 
 	// Calculate the total capacity of all inputs.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a cell with data from the specified file.
 	const {hexString: hexString2} = await readFileToHexString(DATA_FILE_2);
 	const outputCapacity1 = intToHex(inputCapacity - TX_FEE);
-	const output1 = {cell_output: {capacity: outputCapacity1, lock: addressToScript(ADDRESS_1), type: null}, data: hexString2};
+	const output1 = {cellOutput: {capacity: outputCapacity1, lock: addressToScript(ADDRESS_1), type: null}, data: hexString2};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 
 	// Add in the witness placeholders.

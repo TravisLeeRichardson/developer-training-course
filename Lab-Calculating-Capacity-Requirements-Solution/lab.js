@@ -33,11 +33,11 @@ async function validateLab(skeleton)
 	if(tx.outputs.length != 2)
 		throw new Error("This lab requires two output cells.");
 
-	if(hexToInt(tx.outputs[0].cell_output.capacity) != ckbytesToShannons(1_000n))
+	if(hexToInt(tx.outputs[0].cellOutput.capacity) != ckbytesToShannons(1_000n))
 		throw new Error("This lab requires output 0 to have a capacity of 1,000 CKBytes.")
 
-	const inputCapacity = skeleton.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = skeleton.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = skeleton.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = skeleton.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 	const TX_FEE = inputCapacity - outputCapacity;
 
 	if(outputCapacity > inputCapacity)

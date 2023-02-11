@@ -40,7 +40,7 @@ async function main()
 	const hexString = "0x48656c6c6f204e6572766f7321"; // "Hello Nervos!" as a hex string.
 	const dataSize = ((hexString.length - 2) / 2); // Calculate the size of hexString as binary.
 	const outputCapacity1 = intToHex(ckbytesToShannons(61n) + ckbytesToShannons(dataSize)); // 61 CKBytes for the Cell minimum + the size of the data.
-	const output1 = {cell_output: {capacity: outputCapacity1, lock: addressToScript(ADDRESS), type: null}, data: hexString};
+	const output1 = {cellOutput: {capacity: outputCapacity1, lock: addressToScript(ADDRESS), type: null}, data: hexString};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 
 	// Add capacity to the transaction.
@@ -49,12 +49,12 @@ async function main()
 	transaction = transaction.update("inputs", (i)=>i.concat(inputCells));
 
 	// Get the capacity sums of the inputs and outputs.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const outputCapacity2 = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	const output2 = {cell_output: {capacity: outputCapacity2, lock: addressToScript(ADDRESS), type: null}, data: "0x"};
+	const output2 = {cellOutput: {capacity: outputCapacity2, lock: addressToScript(ADDRESS), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output2));	
 
 	// Add in the witness placeholders.

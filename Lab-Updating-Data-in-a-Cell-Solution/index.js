@@ -56,13 +56,13 @@ async function main()
 	{
 		const {hexString} = await readFileToHexString(DATA_FILE);
 		const outputCapacity = intToHex(ckbytesToShannons(61n) + ckbytesToShannons((hexString.length - 2) / 2));
-		const output = {cell_output: {capacity: outputCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: hexString};
+		const output = {cellOutput: {capacity: outputCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: hexString};
 		transaction = transaction.update("outputs", (i)=>i.push(output));
 	}
 
 	// Calculate the capacity sum of the inputs and outputs.
-	let inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	let outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	let inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	let outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Add input cells to the transaction to use for capacity, if needed.
 	let capacityRequired = outputCapacity - inputCapacity + TX_FEE; // (output1 + output2) - (input1 + input2) + tx fee
@@ -74,13 +74,13 @@ async function main()
 	}
 
 	// Recalculate the capacity sum of the inputs and outputs.
-	inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes, if needed.
 	if(inputCapacity - outputCapacity - TX_FEE > 0n)
 	{
 		const changeCellCapacity = intToHex(inputCapacity - outputCapacity - TX_FEE);
-		const output2 = {cell_output: {capacity: changeCellCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
+		const output2 = {cellOutput: {capacity: changeCellCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
 		transaction = transaction.update("outputs", (i)=>i.push(output2));
 	}
 

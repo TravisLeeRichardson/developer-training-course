@@ -70,12 +70,12 @@ async function createMultiSigCell(indexer)
 
 	const lockScript1 =
 	{
-		code_hash: MULTISIG_LOCK_HASH,
-		hash_type: "type",
+		codeHash: MULTISIG_LOCK_HASH,
+		hashType: "type",
 		args: multisigScriptHash
 	};
 
-	const output1 = {cell_output: {capacity: outputCapacity1, lock: lockScript1, type: null}, data: "0x"};
+	const output1 = {cellOutput: {capacity: outputCapacity1, lock: lockScript1, type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 
 	// Add capacity to the transaction.
@@ -84,12 +84,12 @@ async function createMultiSigCell(indexer)
 	transaction = transaction.update("inputs", (i)=>i.concat(inputCells));
 
 	// Get the capacity sums of the inputs and outputs.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const outputCapacity2 = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	const output2 = {cell_output: {capacity: outputCapacity2, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
+	const output2 = {cellOutput: {capacity: outputCapacity2, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output2));	
 
 	// Add in the witness placeholders.
@@ -113,8 +113,8 @@ async function createMultiSigCell(indexer)
 	console.log("\n");
 
 	const outPoints = [
-		{tx_hash: txid, index: "0x0"},
-		{tx_hash: txid, index: "0x1"}
+		{txHash: txid, index: "0x0"},
+		{txHash: txid, index: "0x1"}
 	];
 
 	return outPoints;
@@ -128,7 +128,7 @@ async function consumeMultiSigCell(indexer, deployOutPoints) {
 
 	// Add the cell dep for the multi sig lock script.
 	transaction = addDefaultCellDeps(transaction);
-	transaction = transaction.update("cellDeps", (cellDeps)=>cellDeps.push(locateCellDep({code_hash: MULTISIG_LOCK_HASH, hash_type: "type"})));
+	transaction = transaction.update("cellDeps", (cellDeps)=>cellDeps.push(locateCellDep({codeHash: MULTISIG_LOCK_HASH, hashType: "type"})));
 
 	// Get a live cell for each out point and add to the transaction.
 	for(const outPoint of deployOutPoints) {
@@ -137,11 +137,11 @@ async function consumeMultiSigCell(indexer, deployOutPoints) {
 	}
 
 	// Get the capacity sum of the inputs.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a Cell for the CKBytes.
 	const outputCellCapacity = intToHex(inputCapacity - TX_FEE);
-	let outputCell = {cell_output: {capacity: outputCellCapacity, lock: addressToScript(ADDRESS_2), type: null}, data: "0x"};
+	let outputCell = {cellOutput: {capacity: outputCellCapacity, lock: addressToScript(ADDRESS_2), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(outputCell));
 
 	// Add in the witness placeholders.

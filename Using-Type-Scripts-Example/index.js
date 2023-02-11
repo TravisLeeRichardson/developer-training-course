@@ -36,7 +36,7 @@ async function deployAlwaysSuccessBinary(indexer)
 	// Create a cell with data from the specified file.
 	const {hexString: hexString1, dataSize: dataSize1} = await readFileToHexString(DATA_FILE_1);
 	const outputCapacity1 = ckbytesToShannons(61n) + ckbytesToShannons(dataSize1);
-	const output1 = {cell_output: {capacity: intToHex(outputCapacity1), lock: addressToScript(ADDRESS_1), type: null}, data: hexString1};
+	const output1 = {cellOutput: {capacity: intToHex(outputCapacity1), lock: addressToScript(ADDRESS_1), type: null}, data: hexString1};
 	transaction = transaction.update("outputs", (i)=>i.push(output1));
 
 	// Add input capacity cells.
@@ -44,12 +44,12 @@ async function deployAlwaysSuccessBinary(indexer)
 	transaction = transaction.update("inputs", (i)=>i.concat(collectedCells.inputCells));
 
 	// Determine the capacity of all input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const changeCapacity = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	let change = {cell_output: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
+	let change = {cellOutput: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(change));
 
 	// Add in the witness placeholders.
@@ -75,7 +75,7 @@ async function deployAlwaysSuccessBinary(indexer)
 	// Return the out point for the always success binary so it can be used in the next transaction.
 	const outPoint =
 	{
-		tx_hash: txid,
+		txHash: txid,
 		index: "0x0"
 	};
 
@@ -89,24 +89,24 @@ async function createCellWithAlwaysSuccessTypeScript(indexer, alwaysSuccessCodeO
 
 	// Add the cell deps for the lock script and type script.
 	transaction = addDefaultCellDeps(transaction);
-	const cellDep = {dep_type: "code", out_point: alwaysSuccessCodeOutPoint};
+	const cellDep = {depType: "code", outPoint: alwaysSuccessCodeOutPoint};
 	transaction = transaction.update("cellDeps", (cellDeps)=>cellDeps.push(cellDep));
 
 	// Create cells using the always success type script.
 	const outputCapacity1 = ckbytesToShannons(94n);
 	const lockScript1 =
 	{
-		code_hash: DEFAULT_LOCK_HASH,
-		hash_type: "type",
+		codeHash: DEFAULT_LOCK_HASH,
+		hashType: "type",
 		args: lockArg1
 	};
 	const typeScript1 =
 	{
-		code_hash: DATA_FILE_HASH_1,
-		hash_type: "data",
+		codeHash: DATA_FILE_HASH_1,
+		hashType: "data",
 		args: "0x"
 	};
-	const output1 = {cell_output: {capacity: intToHex(outputCapacity1), lock: lockScript1, type: typeScript1}, data: "0x"};
+	const output1 = {cellOutput: {capacity: intToHex(outputCapacity1), lock: lockScript1, type: typeScript1}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(output1, output1, output1));
 
 	// Add input capacity cells.
@@ -115,12 +115,12 @@ async function createCellWithAlwaysSuccessTypeScript(indexer, alwaysSuccessCodeO
 	transaction = transaction.update("inputs", (i)=>i.concat(collectedCells.inputCells));
 
 	// Determine the capacity of all input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const changeCapacity = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	let change = {cell_output: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
+	let change = {cellOutput: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(change));
 
 	// Add in the witness placeholders.
@@ -151,15 +151,15 @@ async function consumeCellWithAlwaysSuccessTypeScript(indexer, alwaysSuccessCode
 
 	// Add the cell deps for the lock script and type script.
 	transaction = addDefaultCellDeps(transaction);
-	const cellDep = {dep_type: "code", out_point: alwaysSuccessCodeOutPoint};
+	const cellDep = {depType: "code", outPoint: alwaysSuccessCodeOutPoint};
 	transaction = transaction.update("cellDeps", (cellDeps)=>cellDeps.push(cellDep));
 
 	// Add the always success cell to the transaction.
 	const lockScript1 = addressToScript(ADDRESS_1);
 	const typeScript1 =
 	{
-		code_hash: DATA_FILE_HASH_1,
-		hash_type: "data",
+		codeHash: DATA_FILE_HASH_1,
+		hashType: "data",
 		args: "0x"
 	};
 	const query = {lock: lockScript1, type: typeScript1};
@@ -173,12 +173,12 @@ async function consumeCellWithAlwaysSuccessTypeScript(indexer, alwaysSuccessCode
 	// transaction = transaction.update("inputs", (i)=>i.concat(collectedCells.inputCells));
 
 	// Determine the capacity of all input cells.
-	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
-	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cell_output.capacity), 0n);
+	const inputCapacity = transaction.inputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
+	const outputCapacity = transaction.outputs.toArray().reduce((a, c)=>a+hexToInt(c.cellOutput.capacity), 0n);
 
 	// Create a change Cell for the remaining CKBytes.
 	const changeCapacity = intToHex(inputCapacity - outputCapacity - TX_FEE);
-	let change = {cell_output: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
+	let change = {cellOutput: {capacity: changeCapacity, lock: addressToScript(ADDRESS_1), type: null}, data: "0x"};
 	transaction = transaction.update("outputs", (i)=>i.push(change));
 
 	// Add in the witness placeholders.
