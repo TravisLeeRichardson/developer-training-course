@@ -1,8 +1,16 @@
 "use strict";
 
-const {describeTransaction: libDescribeTransaction} = require("../lib/index.js");
+//const { FileSystemModule } = require("bufferutility");
+import { FileSystemModule } from "bufferutility";
 
-function describeTransaction(transaction)
+//const {describeTransaction: libDescribeTransaction} = import("../lib/index.js");
+import {describeTransaction as libDescribeTransaction} from "../lib/index.js";
+//import {describeTransaction} from "../lib/index.js";
+//const {addDefaultCellDeps, addDefaultWitnessPlaceholders, getLiveCell, sendTransaction, signTransaction, waitForTransactionConfirmation} = await import ("../lib/index.js");
+
+
+
+export function  describeTransaction(transaction)
 {
 	const options =
 	{
@@ -15,19 +23,15 @@ function describeTransaction(transaction)
 	return libDescribeTransaction(transaction, options);
 }
 
-async function initializeLab(NODE_URL, indexer)
+export async function initializeLab(NODE_URL, indexer)
 {
 	// Nothing to do in this lab.
 }
 
-async function validateLab(transaction)
+export async function validateLab(transaction)
 {
 	// Nothing to do in this lab.
 }
 
-module.exports =
-{
-	describeTransaction,
-	initializeLab,
-	validateLab
-};
+
+
